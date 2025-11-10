@@ -1,12 +1,16 @@
 
+using E_Commerce.Domain.Contracts;
+using E_Commerce.Persistence.Data.DataSeed;
 using E_Commerce.Persistence.DbContexts;
+using E_Commerce.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace E_Commerce.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             #region Create Host And Add services to the container.
             var builder = WebApplication.CreateBuilder(args);
@@ -21,9 +25,17 @@ namespace E_Commerce.Web
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddScoped<IDataInatializer,DataInatializer>();
             #endregion
 
             var app = builder.Build();
+
+            #region Data Seeding
+            await app.MigrateDatabaseAsync();
+            await app.SeedDatabaseAsync();
+            #endregion
+
 
             #region Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -40,7 +52,7 @@ namespace E_Commerce.Web
             app.MapControllers();
 
             #endregion
-            app.Run();
+            await app.RunAsync();
         }
     }
 }
