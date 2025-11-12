@@ -39,7 +39,7 @@ namespace E_Commerce.Persistence.Data.DataSeed
                 
 
                 if (!HasTypes)
-                
+                    await SeedDataFromJson<ProductType, int>("types.json", _dbContext.ProductTypes);
 
                 _dbContext.SaveChanges();
 
