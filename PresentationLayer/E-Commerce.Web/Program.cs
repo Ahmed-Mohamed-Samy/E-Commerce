@@ -2,6 +2,10 @@
 using E_Commerce.Domain.Contracts;
 using E_Commerce.Persistence.Data.DataSeed;
 using E_Commerce.Persistence.DbContexts;
+using E_Commerce.Persistence.Repository;
+using E_Commerce.Services;
+using E_Commerce.Services.Profiles;
+using E_Commerce.Services_Abstraction;
 using E_Commerce.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -27,6 +31,10 @@ namespace E_Commerce.Web
             });
 
             builder.Services.AddScoped<IDataInatializer,DataInatializer>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddAutoMapper(typeof(ServicesAsssemblyReference).Assembly);
+           
+            builder.Services.AddScoped<IProductService, ProductService>();
             #endregion
 
             var app = builder.Build();
@@ -48,8 +56,9 @@ namespace E_Commerce.Web
 
             app.UseAuthorization();
 
-
+            app.UseStaticFiles();
             app.MapControllers();
+            
 
             #endregion
             await app.RunAsync();
