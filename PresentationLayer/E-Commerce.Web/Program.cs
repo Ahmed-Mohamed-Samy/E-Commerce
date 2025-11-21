@@ -32,16 +32,19 @@ namespace E_Commerce.Web
             });
 
             builder.Services.AddScoped<IDataInatializer,DataInatializer>();
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddAutoMapper(typeof(ServicesAsssemblyReference).Assembly);
            
-            builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddSingleton<IConnectionMultiplexer>(SP =>
             {
                 return ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")!);
             });
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+            builder.Services.AddScoped<ICacheRepository, CacheRepository>();
+            builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IBasketService, BasketService>();
+            builder.Services.AddScoped<ICacheService, CacheService>();
+            
             #endregion
 
             var app = builder.Build();
