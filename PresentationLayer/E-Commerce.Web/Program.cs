@@ -6,7 +6,11 @@ using E_Commerce.Persistence.Repository;
 using E_Commerce.Services;
 using E_Commerce.Services.Profiles;
 using E_Commerce.Services_Abstraction;
+using E_Commerce.Web.CustomMiddleWares;
 using E_Commerce.Web.Extensions;
+using E_Commerce.Web.Factories;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using System.Threading.Tasks;
@@ -29,7 +33,7 @@ namespace E_Commerce.Web
             builder.Services.AddDbContext<StoreDbContext>(opt =>
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+            }); 
 
             builder.Services.AddScoped<IDataInatializer,DataInatializer>();
             builder.Services.AddAutoMapper(typeof(ServicesAsssemblyReference).Assembly);
@@ -44,8 +48,12 @@ namespace E_Commerce.Web
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IBasketService, BasketService>();
             builder.Services.AddScoped<ICacheService, CacheService>();
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = ApiResponseFactory.GenerateApiValidationResponse;
+            });
             
-            #endregion
+            #endregion 
 
             var app = builder.Build();
 
@@ -56,6 +64,9 @@ namespace E_Commerce.Web
 
 
             #region Configure the HTTP request pipeline.
+
+            app.UseMiddleware<ExceptionHandlerMiddleWare>(); 
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
