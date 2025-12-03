@@ -62,6 +62,10 @@ namespace E_Commerce.Shared.CommonResult
 
         public static new Result<TValue> Fail(List<Error> errors) => new(errors);
 
+        public static implicit operator Result<TValue>(TValue value) => OK(value);
+        public static implicit operator Result<TValue>(Error error) => Fail(error);
+        public static implicit operator Result<TValue>(List<Error> errors) => Fail(errors);
+
     }
 
 }
